@@ -28,7 +28,6 @@ def check_validity(walls):
                 continue 
             if level[row][col] == ' ' and level[row - 1][col] == 'W' and level[row + 1][col] == 'W' and \
                    level[row][col - 1] == 'W' and level[row][col + 1] == 'W':
-                    # print("jest", row, col)
                     remove = random.randint(1,4)
                     if remove == 1:
                         level[row+1] = level[row+1][:col] + ' ' + level[row+1][col + 1:]
@@ -37,6 +36,43 @@ def check_validity(walls):
                     if remove == 3:
                         level[row-1] = level[row-1][:col] + ' ' + level[row-1][col + 1:]
                     if remove == 4:
+                        level[row] = level[row][:col+1] + ' ' + level[row][col + 2:]
+                        
+            if level[row][col] == ' ' and level[row - 1][col] == 'W' and \
+                   level[row][col - 1] == 'W' and level[row][col + 1] == 'W':
+                    remove = random.randint(1,3)
+                    if remove == 1:
+                        level[row] = level[row][:col-1] + ' ' + level[row][col:]
+                    if remove == 2:
+                        level[row-1] = level[row-1][:col] + ' ' + level[row-1][col + 1:]
+                    if remove == 3:
+                        level[row] = level[row][:col+1] + ' ' + level[row][col + 2:]
+                        
+            if level[row][col] == ' ' and level[row - 1][col] == 'W' and level[row + 1][col] == 'W' and level[row][col + 1] == 'W':
+                    remove = random.randint(1,3)
+                    if remove == 1:
+                        level[row+1] = level[row+1][:col] + ' ' + level[row+1][col + 1:]
+                    if remove == 2:
+                        level[row] = level[row][:col-1] + ' ' + level[row][col:]
+                    if remove == 3:
+                        level[row] = level[row][:col+1] + ' ' + level[row][col + 2:]
+                        
+            if level[row][col] == ' ' and level[row - 1][col] == 'W' and level[row + 1][col] == 'W' and level[row][col - 1] == 'W':
+                    remove = random.randint(1,3)
+                    if remove == 1:
+                        level[row+1] = level[row+1][:col] + ' ' + level[row+1][col + 1:]
+                    if remove == 2:
+                        level[row] = level[row][:col-1] + ' ' + level[row][col:]
+                    if remove == 3:
+                        level[row-1] = level[row-1][:col] + ' ' + level[row-1][col + 1:]
+                        
+            if level[row][col] == ' ' and level[row - 1][col] == 'W' and level[row + 1][col] == 'W' and level[row][col + 1] == 'W':
+                    remove = random.randint(1,3)
+                    if remove == 1:
+                        level[row+1] = level[row+1][:col] + ' ' + level[row+1][col + 1:]
+                    if remove == 2:
+                        level[row-1] = level[row-1][:col] + ' ' + level[row-1][col + 1:]
+                    if remove == 3:
                         level[row] = level[row][:col+1] + ' ' + level[row][col + 2:]
     return level
 
