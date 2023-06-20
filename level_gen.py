@@ -5,7 +5,7 @@ def generate_level(walls, wall_density):
 
     for row in range(1, len(walls) - 1):
         for col in range(1, len(walls[row]) - 1):
-            if row == 1 or col == 1 or row == len(walls) / 2 or col == len(walls[row]) / 2 or row == len(walls) - 2 or col == len(walls[row]) - 2:
+            if row == 1 or col == 1 or row == len(walls) // 2 or col == len(walls[row]) // 2 or row == len(walls) - 2 or col == len(walls[row]) - 2:
                 continue
             if walls[row][col] == ' ':
                 # Check if the surrounding area is empty
@@ -26,6 +26,7 @@ def check_validity(walls):
             if row == 1 or col == 1 or row == len(walls) - 1 or row == len(walls) - 2 or \
                 col == len(walls[row]) - 1 or col == len(walls[row]) - 2:
                 continue 
+            # check whether an empty tile is surrounded by walls on each side, if so, remove a wall from a random side
             if level[row][col] == ' ' and level[row - 1][col] == 'W' and level[row + 1][col] == 'W' and \
                    level[row][col - 1] == 'W' and level[row][col + 1] == 'W':
                     remove = random.randint(1,4)
@@ -37,8 +38,9 @@ def check_validity(walls):
                         level[row-1] = level[row-1][:col] + ' ' + level[row-1][col + 1:]
                     if remove == 4:
                         level[row] = level[row][:col+1] + ' ' + level[row][col + 2:]
-                        
-            if level[row][col] == ' ' and level[row - 1][col] == 'W' and \
+            # check whether an empty tile is surrouded by walls on 3 sides, if so, remove a wall from a random side
+            # (done for 4 possible combinations)
+            elif level[row][col] == ' ' and level[row - 1][col] == 'W' and \
                    level[row][col - 1] == 'W' and level[row][col + 1] == 'W':
                     remove = random.randint(1,3)
                     if remove == 1:
@@ -48,7 +50,7 @@ def check_validity(walls):
                     if remove == 3:
                         level[row] = level[row][:col+1] + ' ' + level[row][col + 2:]
                         
-            if level[row][col] == ' ' and level[row - 1][col] == 'W' and level[row + 1][col] == 'W' and level[row][col + 1] == 'W':
+            elif level[row][col] == ' ' and level[row - 1][col] == 'W' and level[row + 1][col] == 'W' and level[row][col + 1] == 'W':
                     remove = random.randint(1,3)
                     if remove == 1:
                         level[row+1] = level[row+1][:col] + ' ' + level[row+1][col + 1:]
@@ -57,7 +59,7 @@ def check_validity(walls):
                     if remove == 3:
                         level[row] = level[row][:col+1] + ' ' + level[row][col + 2:]
                         
-            if level[row][col] == ' ' and level[row - 1][col] == 'W' and level[row + 1][col] == 'W' and level[row][col - 1] == 'W':
+            elif level[row][col] == ' ' and level[row - 1][col] == 'W' and level[row + 1][col] == 'W' and level[row][col - 1] == 'W':
                     remove = random.randint(1,3)
                     if remove == 1:
                         level[row+1] = level[row+1][:col] + ' ' + level[row+1][col + 1:]
@@ -66,7 +68,7 @@ def check_validity(walls):
                     if remove == 3:
                         level[row-1] = level[row-1][:col] + ' ' + level[row-1][col + 1:]
                         
-            if level[row][col] == ' ' and level[row - 1][col] == 'W' and level[row + 1][col] == 'W' and level[row][col + 1] == 'W':
+            elif level[row][col] == ' ' and level[row - 1][col] == 'W' and level[row + 1][col] == 'W' and level[row][col + 1] == 'W':
                     remove = random.randint(1,3)
                     if remove == 1:
                         level[row+1] = level[row+1][:col] + ' ' + level[row+1][col + 1:]
@@ -76,30 +78,32 @@ def check_validity(walls):
                         level[row] = level[row][:col+1] + ' ' + level[row][col + 2:]
     return level
 
+# code to see whether the validation works
 # walls = [
-#     "WWWWWWWWWWWWWWWWWWWW",
-#     "W                  W",
-#     "W                  W",
-#     "W                  W",
-#     "W                  W",
-#     "W                  W",
-#     "W                  W",
-#     "W                  W",
-#     "W                  W",
-#     "W                  W",
-#     "W                  W",
-#     "W                  W",
-#     "W                  W",
-#     "W                  W",
-#     "W                  W",
-#     "W                  W",
-#     "W                  W",
-#     "W                  W",
-#     "W                  W",
-#     "WWWWWWWWWWWWWWWWWWWW",
+#     "WWWWWWWWWWWWWWWWWWWWW",
+#     "W                   W",
+#     "W                   W",
+#     "W                   W",
+#     "W                   W",
+#     "W                   W",
+#     "W                   W",
+#     "W                   W",
+#     "W                   W",
+#     "W                   W",
+#     "W                   W",
+#     "W                   W",
+#     "W                   W",
+#     "W                   W",
+#     "W                   W",
+#     "W                   W",
+#     "W                   W",
+#     "W                   W",
+#     "W                   W",
+#     "W                   W",
+#     "WWWWWWWWWWWWWWWWWWWWW",
 # ]
 
-# wall_density = 0.35  # Probability of generating a wall in the space between existing walls
+# wall_density = 0.4  # Probability of generating a wall in the space between existing walls
 
 # generated_level = generate_level(walls, wall_density)
 # generated_level = check_validity(generate_level(walls, wall_density))

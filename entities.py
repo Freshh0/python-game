@@ -1,14 +1,17 @@
 import pygame
-import globals
+from globals import *
 
 # player class
 class Player(object):
     def __init__(self, pos_x, pos_y, move_speed, up, down, left, right, color):
         self.pos_x = pos_x
         self.pos_y = pos_y
+        self.init_pos_x = pos_x
+        self.init_pos_y = pos_y
         self.move_speed = move_speed
-        self.rect = pygame.Rect(self.pos_x, self.pos_y, globals.PLAYER_WIDTH, globals.PLAYER_HEIGHT)
+        self.rect = pygame.Rect(self.init_pos_x, self.init_pos_y, PLAYER_WIDTH, PLAYER_HEIGHT)
         self.score = 0
+        self.overall_score = 0
         self.up = up
         self.down = down
         self.left = left
@@ -41,7 +44,7 @@ class Player(object):
         self.rect.x += x_val
         self.rect.y += y_val
 
-        for wall in globals.walls:
+        for wall in walls:
             if self.rect.colliderect(wall.rect):
                 if x_val > 0: # Moving right; Hit the left side of the wall
                     self.rect.right = wall.rect.left
@@ -51,19 +54,21 @@ class Player(object):
                     self.rect.bottom = wall.rect.top
                 if y_val < 0: # Moving up; Hit the bottom side of the wall
                     self.rect.top = wall.rect.bottom
+
+    def reset(self):
+        self.rect = pygame.Rect(self.init_pos_x, self.init_pos_y, PLAYER_WIDTH, PLAYER_HEIGHT)
+        self.score = 0
+        self.move_speed = PLAYER_MOVE_SPEED
         
 # wall class
 class Wall(object):
-
     def __init__(self, pos):
-        globals.walls.append(self)
-        self.rect = pygame.Rect(pos[0], pos[1], globals.WALL_SIZE, globals.WALL_SIZE)
+        self.rect = pygame.Rect(pos[0], pos[1], WALL_SIZE, WALL_SIZE)
 
 # coin class
 class Coin(object):
-
     def __init__(self, pos):
         self.rect = pygame.Rect(pos[0], pos[1], 16, 16)
 
     def delete(self):
-        globals.coins.remove(self)
+        coins.remove(self)

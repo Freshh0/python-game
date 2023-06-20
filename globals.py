@@ -1,9 +1,8 @@
-from pygame.locals import *
-from entities import Player
+import pygame
 
 # preset values and colors
-SCREEN_WIDTH = 640
-SCREEN_HEIGHT = 640
+SCREEN_WIDTH = 672
+SCREEN_HEIGHT = 672
 
 PLAYER_WIDTH = 30
 PLAYER_HEIGHT = 30
@@ -14,9 +13,9 @@ PLAYER_MOVE_SPEED = 3
 
 COIN_AMOUNT = 10
 
-WALL_GEN_PROB = 0.45
+WALL_GEN_PROB = 0.4
 
-WIN_SCORE = 50
+WIN_SCORE = 3
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -27,10 +26,39 @@ GREY = (100, 100, 100)
 YELLOW = (255, 225, 0)
 
 
+
+level_outline = [
+    "WWWWWWWWWWWWWWWWWWWWW",
+    "W                   W",
+    "W                   W",
+    "W                   W",
+    "W                   W",
+    "W                   W",
+    "W                   W",
+    "W                   W",
+    "W                   W",
+    "W                   W",
+    "W                   W",
+    "W                   W",
+    "W                   W",
+    "W                   W",
+    "W                   W",
+    "W                   W",
+    "W                   W",
+    "W                   W",
+    "W                   W",
+    "W                   W",
+    "WWWWWWWWWWWWWWWWWWWWW",
+]
+
+# player1_overall_wins = 0
+# player2_overall_wins = 0
+
 players = []
 walls = []
 coins = []
-non_player_list = [[False for _ in range(20)] for _ in range(20)]
+non_player_list = [[False for _ in range(21)] for _ in range(21)]
 
-players.append(Player(WALL_SIZE, WALL_SIZE, PLAYER_MOVE_SPEED, K_w, K_s, K_a, K_d, RED))
-players.append(Player(SCREEN_WIDTH-(2*WALL_SIZE), SCREEN_HEIGHT-(2*WALL_SIZE), PLAYER_MOVE_SPEED, K_UP, K_DOWN, K_LEFT, K_RIGHT, BLUE))
+
+pygame.font.init()
+font = pygame.font.Font(pygame.font.get_default_font(), 20)
