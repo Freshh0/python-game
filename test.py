@@ -4,6 +4,8 @@ import sys
 import os
 import random
 
+from level_gen import generate_level, check_validity
+
 # player class
 class Player(object):
     def __init__(self, pos_x, pos_y, up, down, left, right, color):
@@ -97,14 +99,16 @@ def draw_text(text, x, y, color):
 WIN_WIDTH = 640
 WIN_HEIGHT = 640
 
-PLAYER_WIDTH = 32
-PLAYER_HEIGHT = 32
+PLAYER_WIDTH = 30
+PLAYER_HEIGHT = 30
 
 WALL_SIZE = 32
 
 PLAYER_MOVE_SPEED = 3
 
 COIN_AMOUNT = 10
+
+WALL_GEN_PROB = 0.4
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -132,8 +136,8 @@ game_state = 'play'
 
 clock = pygame.time.Clock()
 players = []
-players.append(Player(32, 32, K_w, K_s, K_a, K_d, RED))
-players.append(Player(WIN_WIDTH-(2*PLAYER_WIDTH), WIN_HEIGHT-(2*PLAYER_HEIGHT), K_UP, K_DOWN, K_LEFT, K_RIGHT, BLUE))
+players.append(Player(WALL_SIZE, WALL_SIZE, K_w, K_s, K_a, K_d, RED))
+players.append(Player(WIN_WIDTH-(2*WALL_SIZE), WIN_HEIGHT-(2*WALL_SIZE), K_UP, K_DOWN, K_LEFT, K_RIGHT, BLUE))
 walls = []
 non_player_list = [[False for _ in range(20)] for _ in range(20)]
 coins = []
@@ -185,9 +189,12 @@ level2 = [
     "WWWWWWWWWWWWWWWWWWWW",
 ]
 
+level_rand = generate_level(level, WALL_GEN_PROB)
+level_rand = check_validity(level_rand)
+
 # initialize walls
 x = y = 0
-for row in level:
+for row in level_rand:
     for col in row:
         if col == "W":
             Wall((x, y))
