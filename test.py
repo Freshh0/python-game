@@ -2,50 +2,56 @@ import pygame
 from pygame.locals import *
 import sys
 import os
-import time
 import random
 
 # player class
 class Player(object):
-    def __init__(self):
-        self.rect = pygame.Rect(32, 32, PLAYER_WIDTH, PLAYER_HEIGHT)
+    def __init__(self, pos_x, pos_y, up, down, left, right, color):
+        self.pos_x = pos_x
+        self.pos_y = pos_y
+        self.rect = pygame.Rect(self.pos_x, self.pos_y, PLAYER_WIDTH, PLAYER_HEIGHT)
         self.score = 0
+        self.up = up
+        self.down = down
+        self.left = left
+        self.right = right
+        self.color = color
 
     def move_check(self):
 
         key = pygame.key.get_pressed()
 
-        if key[K_LEFT]:
+        if key[self.left]:
             self.move(-PLAYER_MOVE_SPEED, 0)
-        if key[K_RIGHT]:
+        if key[self.right]:
             self.move(PLAYER_MOVE_SPEED, 0)
-        if key[K_UP]:
+        if key[self.up]:
             self.move(0, -PLAYER_MOVE_SPEED)
-        if key[K_DOWN]:
+        if key[self.down]:
             self.move(0, PLAYER_MOVE_SPEED)
 
 
-    def move(self, xval, yval):
+    def move(self, x_val, y_val):
 
-        if xval != 0:
-            self.move_single_axis(xval, 0)
-        if yval != 0:
-            self.move_single_axis(0, yval)
+        if x_val != 0:
+            self.move_single_axis(x_val, 0)
+        if y_val != 0:
+            self.move_single_axis(0, y_val)
 
-    def move_single_axis(self, xval, yval):
+    def move_single_axis(self, x_val, y_val):
 
-        self.rect.x += xval
-        self.rect.y += yval
+        self.rect.x += x_val
+        self.rect.y += y_val
 
         for wall in walls:
             if self.rect.colliderect(wall.rect):
-                if xval > 0: # Moving right; Hit the left side of the wall
+                if x_val > 0: # Moving right; Hit the left side of the wall
                     self.rect.right = wall.rect.left
-                if xval < 0: # Moving left; Hit the right side of the wall
+                if x_val < 0: # Moving left; Hit the right side of the wall
                     self.rect.left = wall.rect.right
-                if yval > 0: # Moving down; Hit the top side of the wall
+                if y_val > 0: # Moving down; Hit the top side of the wall
                     self.rect.bottom = wall.rect.top
-                if yval < 0: # Moving up; Hit the bottom side of the wall
+                if y_val < 0: # Moving up; Hit the bottom side of the wall
                     self.rect.top = wall.rect.bottom
 
 
@@ -76,14 +82,16 @@ def spawn_coin():
     coins.append(Coin((x*32 + 8, y*32 + 8)))
     non_player_list[x][y] = True
 
+
+# function to draw text on screen
+def draw_text(text, x, y, color):
+    text = font.render(text, True, color)
+    text_rect = text.get_rect()
+    text_rect.topleft = (x, y)
+    screen.blit(text, text_rect)
     
 
-
-
-
-os.environ["SDL_VIDEO_CENTERED"] = "1"
-pygame.init()
-
+    
 
 # preset values and colors
 WIN_WIDTH = 640
@@ -108,6 +116,10 @@ YELLOW = (255, 225, 0)
 
 
 
+
+pygame.init()
+os.environ["SDL_VIDEO_CENTERED"] = "1"
+
 # screen setup
 screen = pygame.display.set_mode((WIN_WIDTH,WIN_HEIGHT))
 pygame.display.set_caption("Game")
@@ -115,9 +127,13 @@ pygame.display.set_caption("Game")
 font = pygame.font.Font(pygame.font.get_default_font(), 20)
 
 
+# game state = play / win
+game_state = 'play'
 
 clock = pygame.time.Clock()
-player1 = Player()
+players = []
+players.append(Player(32, 32, K_w, K_s, K_a, K_d, RED))
+players.append(Player(WIN_WIDTH-(2*PLAYER_WIDTH), WIN_HEIGHT-(2*PLAYER_HEIGHT), K_UP, K_DOWN, K_LEFT, K_RIGHT, BLUE))
 walls = []
 non_player_list = [[False for _ in range(20)] for _ in range(20)]
 coins = []
@@ -190,51 +206,74 @@ while True:
 
     clock.tick(60)
 
+    # ------
+    # update
+    # ------
+
+
     # check for quit
     for event in pygame.event.get():
         if event.type == QUIT:
             pygame.quit
             sys.exit()
 
-    # check for player movement
-    player1.move_check()
-
-    # check for coin collection
-    for coin in coins:
-        if coin.rect.colliderect(player1.rect):
-            coins.remove(coin)
-            player1.score += 1
-            non_player_list[coin.rect.x//32][coin.rect.y//32] = False
-            # spawn another coin if collected
-            spawn_coin()
+    if game_state == 'play':
 
 
+        # check for player movement
+        players[0].move_check()
+        players[1].move_check()
 
 
+        for player in players:
+            # check for coin collection
+            for coin in coins:
+                if coin.rect.colliderect(player.rect):
+                    coins.remove(coin)
+                    player.score += 1
+                    if player.score >= 5:
+                        game_state = 'win'
+                    non_player_list[coin.rect.x//32][coin.rect.y//32] = False
+                    # spawn another coin if collected
+                    spawn_coin()
 
-    # fill background
-    screen.fill(BLACK)
+
 
 
     # ----
     # draw
     # ----
+    
+    # fill background
+    screen.fill(BLACK)
 
-    # walls
-    for wall in walls:
-        pygame.draw.rect(screen, (GREY), wall.rect)
+    if game_state == 'play':
 
-    # coins
-    for coin in coins:
-        pygame.draw.rect(screen, (YELLOW), coin.rect)
+        # walls
+        for wall in walls:
+            pygame.draw.rect(screen, (GREY), wall.rect)
 
-    # players
-    pygame.draw.rect(screen, RED, player1.rect)
+        # coins
+        for coin in coins:
+            pygame.draw.rect(screen, (YELLOW), coin.rect)
 
-    # score
-    score_text = font.render("Score: " + str(player1.score), True, WHITE, GREY)
-    score_rect = score_text.get_rect()
-    screen.blit(score_text, score_rect)
+        # players
+        for player in players:
+            pygame.draw.rect(screen, player.color, player.rect)
+
+        # score
+        # if len(players) == 2:
+        draw_text("Player 1 score: " + str(players[0].score), 10, 5, RED)
+        draw_text("Player 2 score: " + str(players[1].score), 470, 5, BLUE)
+
+
+
+    if game_state == 'win':
+        if players[0].score > players[1].score:
+            draw_text("Player 1 wins!", 240, 310, WHITE)
+        else:
+            draw_text("Player 2 wins!", 240, 310, WHITE)
+        
 
 
 
