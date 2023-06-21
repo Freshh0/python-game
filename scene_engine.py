@@ -89,6 +89,7 @@ class GameScene(Scene):
             # check for coin collection
             for coin in coins:
                 if coin.rect.colliderect(player.rect):
+                    # coin.pickup_sound.play()
                     coin.delete()
                     player.score += 1
                     non_player_list[coin.rect.x//32][coin.rect.y//32] = False
@@ -97,6 +98,7 @@ class GameScene(Scene):
             # check for powerup collection
             for power_up in power_ups:
                 if power_up.rect.colliderect(player.rect):
+                    # power_up.pickup_sound.play()
                     power_up.delete()
                     non_player_list[power_up.rect.x//32][power_up.rect.y//32] = False
                     if power_up.type == 'speed':
@@ -164,12 +166,13 @@ class GameOverScene(Scene):
     def draw(self, screen):
         screen.fill(BLACK)
         if players[0].score > players[1].score:
-            utils.draw_text_center(screen, "Player 1 wins!", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 30, WHITE)
+            utils.draw_text_center(screen, "Player 1 wins!", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 45, WHITE)
         else:
-            utils.draw_text_center(screen, "Player 2 wins!", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 30, WHITE)
-            
-        utils.draw_text_center(screen, f"Overall score: {players[0].overall_score} - {players[1].overall_score}", SCREEN_WIDTH/2, SCREEN_HEIGHT/2, WHITE)
-        utils.draw_text_center(screen, "ESC to exit to main menu", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 30, WHITE)
+            utils.draw_text_center(screen, "Player 2 wins!", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 45, WHITE)
+
+        utils.draw_text_center(screen, f"Game score: {players[0].score} - {players[1].score}", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 15, WHITE)
+        utils.draw_text_center(screen, f"Overall score: {players[0].overall_score} - {players[1].overall_score}", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 15, WHITE)
+        utils.draw_text_center(screen, "ESC to exit to main menu", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 45, WHITE)
 
 class ControlsScene(Scene):
     def input(self, sm, input_stream):
@@ -201,6 +204,9 @@ class HelpScene(Scene):
 class SceneManager:
     def __init__(self):
         self.scenes = []
+        # self.background_music = pygame.mixer.Sound('background_music.mp3')
+        # self.background_music.set_volume(0.08)
+        # self.play_music()
 
     def is_empty(self):
         return len(self.scenes) == 0
@@ -247,3 +253,6 @@ class SceneManager:
             self.pop()
         # add selected scene
         self.push(scene)
+
+    # def play_music(self):
+    #     self.background_music.play(loops=-1)

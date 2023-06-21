@@ -33,6 +33,14 @@ class Player(object):
 
 
     def move(self, x_val, y_val):
+        
+        # no idea why, but it has to be that way
+        if x_val > 0:
+            x_val += 0.5
+        if y_val > 0:
+            y_val += 0.5
+        
+
 
         if x_val != 0:
             self.move_single_axis(x_val, 0)
@@ -69,6 +77,8 @@ class Wall(object):
 class Coin(object):
     def __init__(self, pos):
         self.rect = pygame.Rect(pos[0], pos[1], 16, 16)
+        # self.pickup_sound = pygame.mixer.Sound('coin_pickup_sound.mp3')
+        # self.pickup_sound.set_volume(0.3)
 
     def delete(self):
         coins.remove(self)
@@ -78,6 +88,11 @@ class PowerUp(object):
     def __init__(self, pos, type):
         self.rect = pygame.Rect(pos[0], pos[1], 16, 16)
         self.type = type
+        # if type == 'speed':
+        #     self.pickup_sound = pygame.mixer.Sound('speed_pickup_sound.mp3')
+        # elif type == 'size':
+        #     self.pickup_sound = pygame.mixer.Sound('size_pickup_sound.mp3')
+        # self.pickup_sound.set_volume(0.3)
 
     def delete(self):
         power_ups.remove(self)
