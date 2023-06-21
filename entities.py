@@ -73,6 +73,7 @@ class Coin(object):
     def delete(self):
         coins.remove(self)
 
+# powerup class
 class PowerUp(object):
     def __init__(self, pos, type):
         self.rect = pygame.Rect(pos[0], pos[1], 16, 16)

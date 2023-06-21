@@ -13,7 +13,7 @@ PLAYER_MOVE_SPEED = 3
 
 COIN_AMOUNT = 7
 
-WALL_GEN_PROB = 0.55
+WALL_GEN_PROB = 0.5
 
 ANOTHER_COIN_SPAWN_PROB = 0.5
 
@@ -27,7 +27,8 @@ BLUE = (0, 0, 255)
 GREY = (100, 100, 100)
 YELLOW = (255, 225, 0)
 PINK = (240, 10, 200)
-GREEN = (70, 240, 10)
+DARK_GREEN = (30, 180, 10)
+
 
 
 
@@ -60,6 +61,7 @@ walls = []
 coins = []
 power_ups = []
 non_player_list = [[False for _ in range(21)] for _ in range(21)]
+
 
 pygame.font.init()
 font = pygame.font.Font(pygame.font.get_default_font(), 20)

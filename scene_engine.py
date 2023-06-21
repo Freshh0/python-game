@@ -11,7 +11,7 @@ class Scene():
         pass
     def on_exit(self):
         pass
-    def input(self, sm):
+    def input(self, sm, input_stream):
         pass
     def update(self, sm):
         pass
@@ -20,30 +20,29 @@ class Scene():
 
 
 class MainMenuScene(Scene):
-    def input(self, sm):
-        key = pygame.key.get_pressed()
-        if key[pygame.K_RETURN]:
+
+    def input(self, sm, input_stream):
+        if input_stream.keyboard.is_key_pressed(pygame.K_RETURN):
             utils.load_game()
             last_size_pickup = pygame.time.get_ticks()
             last_speed_pickup = pygame.time.get_ticks()
             last_coin_spawn = pygame.time.get_ticks()
             sm.push(GameScene(last_speed_pickup, last_size_pickup, last_coin_spawn))
-        if key[pygame.K_TAB]:
+        if input_stream.keyboard.is_key_pressed(pygame.K_ESCAPE):
             sm.pop()
-        if key[pygame.K_LCTRL]:
+        if input_stream.keyboard.is_key_pressed(pygame.K_LCTRL):
             sm.push(ControlsScene())
-        if key[pygame.K_h]:
+        if input_stream.keyboard.is_key_pressed(pygame.K_h):
             sm.push(HelpScene())
-        
             
     def draw(self, screen):
         screen.fill(BLACK)
         utils.draw_text_center(screen, 'Main menu', SCREEN_WIDTH/2, 100, WHITE)
         utils.draw_text_center(screen, 'First player to 50 points wins!', SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 60, WHITE)
-        utils.draw_text_center(screen, 'ENTER to start the game', SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 30, WHITE)
-        utils.draw_text_center(screen, 'LEFT CONTROL for controls', SCREEN_WIDTH/2, SCREEN_HEIGHT/2, WHITE)
-        utils.draw_text_center(screen, 'H for help', SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 30, WHITE)
-        utils.draw_text_center(screen, 'TAB to exit the game', SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 60, WHITE)
+        utils.draw_text_center(screen, 'ENTER to start the game', SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 20, WHITE)
+        utils.draw_text_center(screen, 'LEFT CONTROL for controls', SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 10, WHITE)
+        utils.draw_text_center(screen, 'H for help', SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 40, WHITE)
+        utils.draw_text_center(screen, 'ESCAPE to exit the game', SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 70, WHITE)
 
 # i hope to use this someday \/
 
@@ -69,9 +68,8 @@ class GameScene(Scene):
         self.last_speed_pickup = last_speed_pickup
         self.last_size_pickup = last_size_pickup
         self.last_coin_spawn = last_coin_spawn
-    def input(self, sm):
-        key = pygame.key.get_pressed()
-        if key[pygame.K_ESCAPE]:
+    def input(self, sm, input_stream):
+        if input_stream.keyboard.is_key_pressed(pygame.K_ESCAPE):
             utils.unload_game()
             sm.pop()
 
@@ -147,7 +145,7 @@ class GameScene(Scene):
         # power ups
         for power_up in power_ups:
             if power_up.type == 'speed':
-                pygame.draw.rect(screen, GREEN, power_up.rect)
+                pygame.draw.rect(screen, DARK_GREEN, power_up.rect)
             if power_up.type == 'size':
                 pygame.draw.rect(screen, PINK, power_up.rect)
         # players
@@ -158,9 +156,8 @@ class GameScene(Scene):
         utils.draw_text(screen, "Player 2 score: " + str(players[1].score), 492, 5, BLUE)
 
 class GameOverScene(Scene):
-    def input(self, sm):
-        key = pygame.key.get_pressed()
-        if key[pygame.K_ESCAPE]:
+    def input(self, sm, input_stream):
+        if input_stream.keyboard.is_key_pressed(pygame.K_ESCAPE):
             utils.unload_game()
             sm.set(MainMenuScene())
 
@@ -175,9 +172,8 @@ class GameOverScene(Scene):
         utils.draw_text_center(screen, "ESC to exit to main menu", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 30, WHITE)
 
 class ControlsScene(Scene):
-    def input(self, sm):
-        key = pygame.key.get_pressed()
-        if key[pygame.K_ESCAPE]:
+    def input(self, sm, input_stream):
+        if input_stream.keyboard.is_key_pressed(pygame.K_ESCAPE):
             sm.pop()
     def draw(self, screen):
         screen.fill(BLACK)
@@ -189,16 +185,17 @@ class ControlsScene(Scene):
         utils.draw_text_center(screen, "ESC to return to main menu", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 60, WHITE)
 
 class HelpScene(Scene):
-    def input(self, sm):
-        key = pygame.key.get_pressed()
-        if key[pygame.K_ESCAPE]:
+    def input(self, sm, input_stream):
+        if input_stream.keyboard.is_key_pressed(pygame.K_ESCAPE):
             sm.pop()
     def draw(self, screen):
         screen.fill(BLACK)
         utils.draw_text_center(screen, "Help", SCREEN_WIDTH/2, 100, WHITE)
-        utils.draw_text_center(screen, "Pink powerup makes you smaller", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 30, WHITE)
-        utils.draw_text_center(screen, "Green powerup makes you faster", SCREEN_WIDTH/2, SCREEN_HEIGHT/2, WHITE)
-        utils.draw_text_center(screen, "ESC to return to main menu", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 30, WHITE)
+        utils.draw_text_center(screen, "Collect coins to gain points, 1 coin = 1 point", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 60, WHITE)
+        utils.draw_text_center(screen, "First player to 50 points wins the game", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 30, WHITE)
+        utils.draw_text_center(screen, "Pink powerup makes you smaller", SCREEN_WIDTH/2, SCREEN_HEIGHT/2, WHITE)
+        utils.draw_text_center(screen, "Green powerup makes you faster", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 30, WHITE)
+        utils.draw_text_center(screen, "ESC to return to main menu", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 70, WHITE)
     
 
 class SceneManager:
@@ -216,9 +213,9 @@ class SceneManager:
         if len(self.scenes) > 0:
             self.scenes[-1].on_exit()
 
-    def input(self):
+    def input(self, input_stream):
         if len(self.scenes) > 0:
-            self.scenes[-1].input(self)
+            self.scenes[-1].input(self, input_stream)
 
     def update(self):
         if len(self.scenes) > 0:

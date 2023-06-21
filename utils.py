@@ -26,6 +26,7 @@ def spawn_coin():
     coins.append(Coin((x*32 + 8, y*32 + 8)))
     non_player_list[x][y] = True
 
+# function to spawn a powerup
 def spawn_power_up(type):
     x = y = 0
     while non_player_list[x][y] != False:
