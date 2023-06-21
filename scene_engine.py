@@ -1,6 +1,7 @@
 import pygame
 import utils
 from globals import *
+import random
 
 
 class Scene():
@@ -125,7 +126,10 @@ class GameScene(Scene):
         if not size and (pygame.time.get_ticks() - self.last_size_pickup) / 1000 >= 8:
             utils.spawn_power_up('size')
 
+        # check if enough time passed for a coin/coins to spawn
         if (pygame.time.get_ticks() - self.last_coin_spawn) / 1000 >= 10:
+            if random.random() < ANOTHER_COIN_SPAWN_PROB:
+                utils.spawn_coin()
             utils.spawn_coin()
             self.last_coin_spawn = pygame.time.get_ticks()
 

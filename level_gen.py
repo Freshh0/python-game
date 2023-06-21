@@ -78,7 +78,7 @@ def check_validity(walls):
                         level[row] = level[row][:col+1] + ' ' + level[row][col + 2:]
     return level
 
-# code to see whether the validation works
+# # code to see whether the validation works
 # walls = [
 #     "WWWWWWWWWWWWWWWWWWWWW",
 #     "W                   W",
@@ -103,7 +103,7 @@ def check_validity(walls):
 #     "WWWWWWWWWWWWWWWWWWWWW",
 # ]
 
-# wall_density = 0.4  # Probability of generating a wall in the space between existing walls
+# wall_density = 0.55  # Probability of generating a wall in the space between existing walls
 
 # generated_level = generate_level(walls, wall_density)
 # generated_level = check_validity(generate_level(walls, wall_density))

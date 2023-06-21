@@ -58,13 +58,13 @@ def init_coins():
     coins.append(Coin((10*32 + 8, 32 + 8)))
     coins.append(Coin((19*32 + 8, 10*32 + 8)))
     coins.append(Coin((10*32 + 8, 19*32 + 8)))
-    non_player_list[18][1] = True
-    non_player_list[1][18] = True
-    non_player_list[9][9] = True
-    non_player_list[1][9] = True
-    non_player_list[9][1] = True
-    non_player_list[18][9] = True
-    non_player_list[9][18] = True
+    non_player_list[19][1] = True
+    non_player_list[1][19] = True
+    non_player_list[10][10] = True
+    non_player_list[1][10] = True
+    non_player_list[10][1] = True
+    non_player_list[19][10] = True
+    non_player_list[10][19] = True
     while len(coins) < COIN_AMOUNT:
         spawn_coin()
 
