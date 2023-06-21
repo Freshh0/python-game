@@ -1,6 +1,6 @@
 from globals import *
 import random
-from entities import Coin, Wall, Player
+from entities import Coin, Wall, Player, PowerUp
 from level_gen import generate_level, check_validity
 
 # function to draw text on screen
@@ -25,6 +25,15 @@ def spawn_coin():
         y = random.randint(1, 19)
     coins.append(Coin((x*32 + 8, y*32 + 8)))
     non_player_list[x][y] = True
+
+def spawn_power_up(type):
+    x = y = 0
+    while non_player_list[x][y] != False:
+        x = random.randint(1, 19)
+        y = random.randint(1, 19)
+    power_ups.append(PowerUp((x*32 + 8, y*32 + 8), type))
+    non_player_list[x][y] = True
+
 
 # function to initialize walls
 def init_walls():
@@ -78,6 +87,9 @@ def unload_game():
     
     while len(walls) > 0:
         walls.pop()
+
+    while len(power_ups) > 0:
+        power_ups.pop()
 
     for row in range(len(non_player_list)):
         for col in non_player_list[row]:

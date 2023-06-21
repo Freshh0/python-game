@@ -23,7 +23,9 @@ class MainMenuScene(Scene):
         key = pygame.key.get_pressed()
         if key[pygame.K_RETURN]:
             utils.load_game()
-            sm.push(GameScene())
+            last_size_pickup = pygame.time.get_ticks()
+            last_speed_pickup = pygame.time.get_ticks()
+            sm.push(GameScene(last_speed_pickup, last_size_pickup))
         if key[pygame.K_TAB]:
             sm.pop()
             
@@ -54,6 +56,9 @@ class MainMenuScene(Scene):
 #         utils.draw_text(screen, 'ESC=Quit', 100, 160, WHITE)
 
 class GameScene(Scene):
+    def __init__(self, last_speed_pickup, last_size_pickup):
+        self.last_speed_pickup = last_speed_pickup
+        self.last_size_pickup = last_size_pickup
     def input(self, sm):
         key = pygame.key.get_pressed()
         if key[pygame.K_ESCAPE]:
@@ -76,20 +81,58 @@ class GameScene(Scene):
             # check for coin collection
             for coin in coins:
                 if coin.rect.colliderect(player.rect):
-                    coins.remove(coin)
+                    coin.delete()
                     player.score += 1
                     non_player_list[coin.rect.x//32][coin.rect.y//32] = False
                     # spawn another coin
                     utils.spawn_coin()
+            # check for powerup collection
+            for power_up in power_ups:
+                if power_up.rect.colliderect(player.rect):
+                    power_up.delete()
+                    non_player_list[power_up.rect.x//32][power_up.rect.y//32] = False
+                    if power_up.type == 'speed':
+                        self.last_speed_pickup = pygame.time.get_ticks()
+                        if player.move_speed <= 4:
+                            player.move_speed += 0.5
+                    if power_up.type == 'size':
+                        self.last_size_pickup = pygame.time.get_ticks()
+                        if player.rect.width > 22:
+                            player.rect.width -= 5
+                            player.rect.height -= 5
+        
+        # check if any powerups can spawn
+        speed = False
+        size = False
+        for power_up in power_ups:
+            if power_up.type == 'speed':
+                speed = True
+            elif power_up.type == 'size':
+                size = True
+        
+        if not speed and (pygame.time.get_ticks() - self.last_speed_pickup) / 1000 >= 8:
+            utils.spawn_power_up('speed')
+            
+        if not size and (pygame.time.get_ticks() - self.last_size_pickup) / 1000 >= 8:
+            utils.spawn_power_up('size')
+
+
+
 
     def draw(self, screen):
         screen.fill(BLACK)
         # walls
         for wall in walls:
-            pygame.draw.rect(screen, (GREY), wall.rect)
+            pygame.draw.rect(screen, GREY, wall.rect)
         # coins
         for coin in coins:
-            pygame.draw.rect(screen, (YELLOW), coin.rect)
+            pygame.draw.rect(screen, YELLOW, coin.rect)
+        # power ups
+        for power_up in power_ups:
+            if power_up.type == 'speed':
+                pygame.draw.rect(screen, ORANGE, power_up.rect)
+            if power_up.type == 'size':
+                pygame.draw.rect(screen, PINK, power_up.rect)
         # players
         for player in players:
             pygame.draw.rect(screen, player.color, player.rect)
@@ -108,12 +151,11 @@ class GameOverScene(Scene):
         screen.fill(BLACK)
         if players[0].score > players[1].score:
             utils.draw_text_center(screen, "Player 1 wins!", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 30, WHITE)
-            utils.draw_text_center(screen, f"Overall score: {players[0].overall_score} - {players[1].overall_score}", SCREEN_WIDTH/2, SCREEN_HEIGHT/2, WHITE)
-            utils.draw_text_center(screen, "Press ESC to exit to main menu", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 30, WHITE)
         else:
             utils.draw_text_center(screen, "Player 2 wins!", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 30, WHITE)
-            utils.draw_text_center(screen, f"Overall score: {players[0].overall_score} - {players[1].overall_score}", SCREEN_WIDTH/2, SCREEN_HEIGHT/2, WHITE)
-            utils.draw_text_center(screen, "Press ESC to exit to main menu", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 30, WHITE)
+            
+        utils.draw_text_center(screen, f"Overall score: {players[0].overall_score} - {players[1].overall_score}", SCREEN_WIDTH/2, SCREEN_HEIGHT/2, WHITE)
+        utils.draw_text_center(screen, "Press ESC to exit to main menu", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 30, WHITE)
 
 
 class SceneManager:

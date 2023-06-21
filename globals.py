@@ -15,7 +15,7 @@ COIN_AMOUNT = 10
 
 WALL_GEN_PROB = 0.4
 
-WIN_SCORE = 3
+WIN_SCORE = 50
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -24,6 +24,8 @@ GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 GREY = (100, 100, 100)
 YELLOW = (255, 225, 0)
+PINK = (240, 10, 200)
+ORANGE = (240, 130, 10)
 
 
 
@@ -51,14 +53,11 @@ level_outline = [
     "WWWWWWWWWWWWWWWWWWWWW",
 ]
 
-# player1_overall_wins = 0
-# player2_overall_wins = 0
-
 players = []
 walls = []
 coins = []
+power_ups = []
 non_player_list = [[False for _ in range(21)] for _ in range(21)]
-
 
 pygame.font.init()
 font = pygame.font.Font(pygame.font.get_default_font(), 20)
