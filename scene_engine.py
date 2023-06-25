@@ -166,9 +166,9 @@ class GameOverScene(Scene):
     def draw(self, screen):
         screen.fill(BLACK)
         if players[0].score > players[1].score:
-            utils.draw_text_center(screen, "Player 1 wins!", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 45, WHITE)
+            utils.draw_text_center(screen, "Player 1 wins!", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 45, RED)
         else:
-            utils.draw_text_center(screen, "Player 2 wins!", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 45, WHITE)
+            utils.draw_text_center(screen, "Player 2 wins!", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 45, BLUE)
 
         utils.draw_text_center(screen, f"Game score: {players[0].score} - {players[1].score}", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 15, WHITE)
         utils.draw_text_center(screen, f"Overall score: {players[0].overall_score} - {players[1].overall_score}", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 15, WHITE)
@@ -181,11 +181,11 @@ class ControlsScene(Scene):
     def draw(self, screen):
         screen.fill(BLACK)
         utils.draw_text_center(screen, "Controls", SCREEN_WIDTH/2, 100, WHITE)
-        utils.draw_text_center(screen, "Player 1:", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 60, WHITE)
-        utils.draw_text_center(screen, "WASD to move", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 30, WHITE)
-        utils.draw_text_center(screen, "Player 2:", SCREEN_WIDTH/2, SCREEN_HEIGHT/2, WHITE)
-        utils.draw_text_center(screen, "Arrow keys to move", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 30, WHITE)
-        utils.draw_text_center(screen, "ESC to return to main menu", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 60, WHITE)
+        utils.draw_text_center(screen, "Player 1:", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 60, RED)
+        utils.draw_text_center(screen, "WASD to move", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 30, RED)
+        utils.draw_text_center(screen, "Player 2:", SCREEN_WIDTH/2, SCREEN_HEIGHT/2, BLUE)
+        utils.draw_text_center(screen, "Arrow keys to move", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 30, BLUE)
+        utils.draw_text_center(screen, "ESC to return to main menu", SCREEN_WIDTH/2, SCREEN_HEIGHT - 100, WHITE)
 
 class HelpScene(Scene):
     def input(self, sm, input_stream):
@@ -194,11 +194,11 @@ class HelpScene(Scene):
     def draw(self, screen):
         screen.fill(BLACK)
         utils.draw_text_center(screen, "Help", SCREEN_WIDTH/2, 100, WHITE)
-        utils.draw_text_center(screen, "Collect coins to gain points, 1 coin = 1 point", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 60, WHITE)
+        utils.draw_text_center(screen, "Collect coins to gain points, 1 coin = 1 point", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 60, YELLOW)
         utils.draw_text_center(screen, "First player to 50 points wins the game", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 30, WHITE)
-        utils.draw_text_center(screen, "Pink powerup makes you smaller", SCREEN_WIDTH/2, SCREEN_HEIGHT/2, WHITE)
-        utils.draw_text_center(screen, "Green powerup makes you faster", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 30, WHITE)
-        utils.draw_text_center(screen, "ESC to return to main menu", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 70, WHITE)
+        utils.draw_text_center(screen, "Pink powerup makes you smaller", SCREEN_WIDTH/2, SCREEN_HEIGHT/2, PINK)
+        utils.draw_text_center(screen, "Green powerup makes you faster", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 30, GREEN)
+        utils.draw_text_center(screen, "ESC to return to main menu", SCREEN_WIDTH/2, SCREEN_HEIGHT - 100, WHITE)
     
 
 class SceneManager:
