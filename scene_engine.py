@@ -23,11 +23,7 @@ class MainMenuScene(Scene):
 
     def input(self, sm, input_stream):
         if input_stream.keyboard.is_key_pressed(pygame.K_RETURN):
-            utils.load_game()
-            last_size_pickup = pygame.time.get_ticks()
-            last_speed_pickup = pygame.time.get_ticks()
-            last_coin_spawn = pygame.time.get_ticks()
-            sm.push(GameScene(last_speed_pickup, last_size_pickup, last_coin_spawn))
+            sm.push(LevelSelectScene())
         if input_stream.keyboard.is_key_pressed(pygame.K_ESCAPE):
             sm.pop()
         if input_stream.keyboard.is_key_pressed(pygame.K_LCTRL):
@@ -46,42 +42,51 @@ class MainMenuScene(Scene):
 
 # i hope to use this someday \/
 
-# class LevelSelectScene(Scene):
-#     def input(self, sm):
-#         key = pygame.key.get_pressed()
-#         if key[pygame.K_ESCAPE]:
-#             sm.pop()
-#         if key[pygame.K_1]:
-#             sm.push(GameScene())
-#         if key[pygame.K_2]:
-#             sm.push(GameScene())
-#     def update(self, sm):
-#         pass
-#     def draw(self, sm, screen):
-#         screen.fill(BLACK)
-#         utils.draw_text(screen, 'Level select. First to', 100, 100, WHITE)
-#         utils.draw_text(screen, '1=25 points 2=50 points', 100, 130, WHITE)
-#         utils.draw_text(screen, 'ESC=Quit', 100, 160, WHITE)
+class LevelSelectScene(Scene):
+    def input(self, sm, input_stream):
+        if input_stream.keyboard.is_key_pressed(pygame.K_ESCAPE):
+            sm.pop()
+        if input_stream.keyboard.is_key_pressed(pygame.K_1):
+            self.load_game(sm, 25)
+        if input_stream.keyboard.is_key_pressed(pygame.K_2):
+            self.load_game(sm, 50)
+
+    def draw(self, screen):
+        screen.fill(BLACK)
+        utils.draw_text_center(screen, 'Level select. First to', SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 30, WHITE)
+        utils.draw_text_center(screen, '1=25 points', SCREEN_WIDTH/2, SCREEN_HEIGHT/2, WHITE)
+        utils.draw_text_center(screen, '2=50 points', SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 30, WHITE)
+        utils.draw_text_center(screen, 'ESC=Quit', SCREEN_WIDTH/2, SCREEN_HEIGHT - 100, WHITE)
+
+    def load_game(self, sm, win_score):
+        utils.load_game()
+        last_size_pickup = pygame.time.get_ticks()
+        last_speed_pickup = pygame.time.get_ticks()
+        last_coin_spawn = pygame.time.get_ticks()
+        sm.push(GameScene(win_score, last_speed_pickup, last_size_pickup, last_coin_spawn))
 
 class GameScene(Scene):
-    def __init__(self, last_speed_pickup, last_size_pickup, last_coin_spawn):
+    def __init__(self, win_score, last_speed_pickup, last_size_pickup, last_coin_spawn):
+        self.win_score = win_score
         self.last_speed_pickup = last_speed_pickup
         self.last_size_pickup = last_size_pickup
         self.last_coin_spawn = last_coin_spawn
     def input(self, sm, input_stream):
-        if input_stream.keyboard.is_key_pressed(pygame.K_ESCAPE):
-            utils.unload_game()
-            sm.pop()
+        # if input_stream.keyboard.is_key_pressed(pygame.K_ESCAPE):
+        #     utils.unload_game()
+        #     sm.pop()
+        if input_stream.keyboard.is_key_pressed(pygame.K_p):
+            sm.push(PauseScene())
 
     def update(self, sm):
         players[0].move_check()
         players[1].move_check()
 
         # check if anyone won
-        if players[0].score >= WIN_SCORE:
+        if players[0].score >= self.win_score:
             players[0].overall_score += 1
             sm.push(GameOverScene())
-        if players[1].score >= WIN_SCORE:
+        if players[1].score >= self.win_score:
             players[1].overall_score += 1
             sm.push(GameOverScene())
                 
@@ -200,6 +205,22 @@ class HelpScene(Scene):
         utils.draw_text_center(screen, "Green powerup makes you faster", SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 30, GREEN)
         utils.draw_text_center(screen, "ESC to return to main menu", SCREEN_WIDTH/2, SCREEN_HEIGHT - 100, WHITE)
     
+class PauseScene(Scene):
+    def input(self, sm, input_stream):
+        if input_stream.keyboard.is_key_pressed(pygame.K_p):
+            sm.pop()
+        if input_stream.keyboard.is_key_pressed(pygame.K_ESCAPE):
+            utils.unload_game()
+            sm.set(MainMenuScene())
+        
+    
+    def draw(self, screen):
+        screen.fill(BLACK)
+        utils.draw_text_center(screen, 'Paused', SCREEN_WIDTH/2, 100, WHITE)
+        utils.draw_text_center(screen, f'Current score: {players[0].score} - {players[1].score}', SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 45, WHITE)
+        utils.draw_text_center(screen, 'P to unpause', SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 15, WHITE)
+        utils.draw_text_center(screen, 'ESC to return to main menu', SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 15, WHITE)
+        utils.draw_text_center(screen, 'ALT-F4 to exit the game', SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 45, WHITE)
 
 class SceneManager:
     def __init__(self):
